@@ -3,14 +3,16 @@ using ApiService.Models.Enums;
 
 namespace ApiService.Models
 {
-    public class Tank : Point
+    public class Tank
     {
         public int Id { get; }
+        public Point Point { get; }
         public DirectionType Direction { get; private set; }
 
-        public Tank(int id, int x, int y) : base(x, y)
+        public Tank(int id, int x, int y)
         {
             Id = id;
+            Point = new Point(x, y);
         }
 
         private void RotateLeft()

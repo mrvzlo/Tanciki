@@ -1,67 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using ApiService.Models;
-using Newtonsoft.Json;
+using ApiService.Models.Enums;
 
 namespace ApiService.Services
 {
     public class RoomService
     {
-        private const string FileName = "Database/Rooms.json";
-        
-        public async Task<Guid> GetRoomForPlayer(Guid playerId)
+        private readonly FileDbService<Room> _roomDbService;
+
+        public RoomService()
         {
-            var rooms = await GetAll();
+            _roomDbService = new FileDbService<Room>("Rooms.json");
+        }
+        
+        public async Task<Room> GetRoomForPlayer(Guid playerId)
+        {
+            var rooms = await _roomDbService.GetList();
             var firstNotFull = -1;
-            var alreadySet = -1;
             for (var i = 0; i < rooms.Count; i++)
             {
                 var room = rooms[i];
-                if (room.Players.Contains(playerId))
-                {
-                    alreadySet = i;
-                    break;
-                }
+                if (room.Players.Contains(playerId) && room.CanReconnect())
+                    return rooms[i];
 
-                if (room.Players.Count < 4 && firstNotFull < 0)
+                if (firstNotFull < 0 && room.CanJoin())
                     firstNotFull = i;
             }
 
-            if (alreadySet >= 0) return rooms[alreadySet].Id;
             if (firstNotFull >= 0)
             {
                 await AddToRoom(rooms, firstNotFull, playerId);
-                return rooms[firstNotFull].Id;
+                return rooms[firstNotFull];
             }
 
             rooms.Add(Create());
             await AddToRoom(rooms, rooms.Count - 1, playerId);
-            return rooms[^1].Id;
+            return rooms[^1];
         }
 
-        private Room Create()
+        private Room Create() => new Room(Guid.NewGuid());
+
+        private async Task AddToRoom(List<Room> rooms, int index, Guid playerId)
         {
-            return new Room(Guid.NewGuid());
+            rooms[index].Players.Add(playerId);
+            if (rooms[index].Players.Count >= 2 && rooms[index].GameState == GameStateType.PreStart)
+            {
+                rooms[index].GameState = GameStateType.Running;
+                await CreateMapForRoom(rooms[index].Id);
+            }
+            await _roomDbService.SaveList(rooms);
         }
 
-        private async Task<List<Room>> GetAll()
+        private async Task CreateMapForRoom(Guid id)
         {
-            var json = await File.ReadAllTextAsync(FileName);
-            return JsonConvert.DeserializeObject<List<Room>>(json) ?? new List<Room>();
-        }
-
-        private async Task AddToRoom(List<Room> rooms, int id, Guid playerId)
-        {
-            rooms[id].Players.Add(playerId);
-            await SaveAll(rooms);
-        }
-
-        private async Task SaveAll(List<Room> rooms)
-        {
-            var json = JsonConvert.SerializeObject(rooms);
-            await File.WriteAllTextAsync(FileName, json);
+            var mapService = new MapService(id);
+            await mapService.CreateMap();
         }
     }
 }

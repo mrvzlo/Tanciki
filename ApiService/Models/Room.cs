@@ -16,7 +16,12 @@ namespace ApiService.Models
         {
             Id = id;
             DateCreated = DateTime.UtcNow;
+            GameState = GameStateType.PreStart;
             Players = new List<Guid>();
         }
+
+        public bool CanJoin() => GameState == GameStateType.PreStart && Players.Count < Consts.MaxPlayersInRoom;
+        public bool CanReconnect() => GameState != GameStateType.End;
+        public bool CanPlay() => GameState == GameStateType.Running;
     }
 }
