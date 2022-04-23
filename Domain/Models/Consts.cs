@@ -1,4 +1,4 @@
-﻿namespace ApiService.Models
+﻿namespace Domain.Models
 {
     public static class Consts
     {

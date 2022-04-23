@@ -1,12 +1,14 @@
-﻿using ApiService.Models.Enums;
+﻿using Domain.Enums;
 
-namespace ApiService.Models
+namespace Domain.Models
 {
     public class Tile : Point
     {
-        public TileType TileType { get; }
+        public TileType TileType { get; set; }
         public TokenType Occupied { get; set; }
         public int OccupiedId { get; set; }
+
+        public Tile(){}
 
         public Tile(int x, int y, TileType tileType) : base(x, y)
         {

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ApiService.Models;
 using ApiService.Services;
+using Domain.Enums;
+using Domain.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ApiService.Controllers
@@ -21,21 +22,26 @@ namespace ApiService.Controllers
             Console.WriteLine("Connected");
         }
 
-        public async Task ConnectPlayer(Guid playerId)
+        public void ConnectPlayer(Guid playerId)
         {
-            var room = await _roomService.GetRoomForPlayer(playerId);
+            var room = _roomService.GetRoomForPlayer(playerId);
             UpdateRoom(room);
         }
 
         public async Task GetMap(Guid playerId, Guid roomId)
         {
             //todo validate
-            _mapService = new MapService(roomId);
-            var map = await _mapService.Get();
+            _mapService = new MapService();
+            var map = _mapService.Get(roomId);
             await Clients.Caller.SendCoreAsync("mapUpdate", new[] { map });
         }
 
-        public void UpdateRoom(Room room)
+        public async Task Action(Guid playerId, Guid roomId, ActionType action)
+        {
+
+        }
+
+        private void UpdateRoom(RoomModel room)
         {
             Clients.All.SendCoreAsync("roomUpdate", new[] { room });
         }

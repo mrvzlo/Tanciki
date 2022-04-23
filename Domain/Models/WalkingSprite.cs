@@ -1,27 +1,28 @@
 ﻿using System;
-using ApiService.Models.Enums;
+using Domain.Enums;
 
-namespace ApiService.Models
+namespace Domain.Models
 {
-    public class Tank
+    public abstract class WalkingSprite
     {
-        public int Id { get; }
-        public Point Point { get; }
-        public DirectionType Direction { get; private set; }
+        public Point Point { get; set; }
+        public DirectionType Direction { get; set; }
 
-        public Tank(int id, int x, int y)
+        protected WalkingSprite(){}
+
+        protected WalkingSprite(Point point)
         {
-            Id = id;
-            Point = new Point(x, y);
+            Point = point;
+            Direction = point.Y == 0 ? DirectionType.Bottom : DirectionType.Top;
         }
 
-        private void RotateLeft()
+        protected void RotateLeft()
         {
             var newDirection = ((int)Direction + RotationsCount - 1) % RotationsCount;
             Direction = (DirectionType)newDirection;
         }
 
-        private void RotateRight()
+        protected void RotateRight()
         {
             var newDirection = ((int)Direction + 1) % RotationsCount;
             Direction = (DirectionType)newDirection;

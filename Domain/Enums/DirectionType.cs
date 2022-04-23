@@ -1,4 +1,4 @@
-﻿namespace ApiService.Models.Enums
+﻿namespace Domain.Enums
 {
     public enum DirectionType
     {

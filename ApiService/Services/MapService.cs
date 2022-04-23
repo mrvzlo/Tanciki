@@ -1,30 +1,49 @@
 ﻿using System;
-using System.Threading.Tasks;
-using ApiService.Models;
-using ApiService.Models.Enums;
+using System.Collections.Generic;
+using Domain.Models;
+using SqliteDataLayer.Repositories;
 
 namespace ApiService.Services
 {
     public class MapService
     {
-        private readonly FileDbService<GameMap> _mapDbService;
-        private readonly FileDbService<GameMapPreset> _presetDbService;
+        private readonly MapRepository _mapRepository;
+        private readonly PresetRepository _presetRepository;
 
-        public MapService(Guid id)
+        public MapService()
         {
-            var filename = "Map" + id + ".json";
-            _mapDbService = new FileDbService<GameMap>(filename);
-            _presetDbService = new FileDbService<GameMapPreset>("MapPreset1.json");
+            _mapRepository = new MapRepository();
+            _presetRepository = new PresetRepository();
         }
 
-        public async Task CreateMap()
+        public void CreateMap(RoomModel room)
         {
-            var preset = await _presetDbService.Get();
-            var gameMap = new GameMap(preset.Size);
-            gameMap.SetTiles(preset.Tiles);
-            await _mapDbService.Save(gameMap);
+            var preset = _presetRepository.GetFirst();
+            var gameMap = new MapModel(preset, room);
+            var corners = GetCorners(room.Players.Count, preset.Size);
+            for (var i = 0; i < room.Players.Count; i++) 
+                gameMap.Tanks.Add(new Tank(room.Players[i], corners[i]));
+
+            var entity = gameMap.ToEntity();
+            _mapRepository.Create(entity);
         }
 
-        public Task<GameMap> Get() => _mapDbService.Get();
+        public MapModel Get(Guid id)
+        {
+            var map = _mapRepository.GetByRoom(id);
+            var preset = _presetRepository.Get(map.PresetId);
+            return new MapModel(map, preset);
+        }
+
+        private List<Point> GetCorners(int count, int max)
+        {
+            return new List<Point>
+            {
+                new Point(0, 0),
+                new Point(0, max-1),
+                new Point(max-1, 0),
+                new Point(max-1, max-1)
+            };
+        }
     }
 }
