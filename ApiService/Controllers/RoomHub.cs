@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using ApiService.Services;
 using Domain.Enums;
@@ -32,13 +34,15 @@ namespace ApiService.Controllers
         {
             //todo validate
             _mapService = new MapService();
-            var map = _mapService.Get(roomId);
+            var map = _mapService.GetMapByRoomId(roomId);
             await Clients.Caller.SendCoreAsync("mapUpdate", new[] { map });
         }
 
-        public async Task Action(Guid playerId, Guid roomId, ActionType action)
+        public async Task PerformAction(Guid playerId, Guid roomId, ActionType action)
         {
-
+            _mapService = new MapService();
+            var results = _mapService.PerformAction(playerId, roomId, action);
+            await Clients.Caller.SendCoreAsync("resolveAction", new[] { results });
         }
 
         private void UpdateRoom(RoomModel room)

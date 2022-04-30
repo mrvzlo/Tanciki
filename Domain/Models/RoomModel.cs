@@ -46,6 +46,6 @@ namespace Domain.Models
         public bool CanJoin() => GameState == GameStateType.PreStart && Players.Count < Consts.MaxPlayersInRoom;
         public bool CanReconnect() => GameState != GameStateType.End;
         public bool CanPlay() => GameState == GameStateType.Running;
-        public bool CanStart() => Players.Count >= 2 && GameState == GameStateType.PreStart;
+        public bool CanStart() => Players.Count >= 1 && GameState == GameStateType.PreStart;
     }
 }

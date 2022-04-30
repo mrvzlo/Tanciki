@@ -37,6 +37,7 @@ namespace ApiService.Services
         private void CreateRoom(RoomModel room, Guid playerId)
         {
             room.Players.Add(playerId);
+            CheckStart(room);
             var entity = room.ToEntity();
             _roomRepository.Create(entity);
         }
@@ -44,14 +45,17 @@ namespace ApiService.Services
         private void AddToRoom(RoomModel room, Guid playerId)
         {
             room.Players.Add(playerId);
-            if (room.CanStart())
-            {
-                room.GameState = GameStateType.Running;
-                _mapService.CreateMap(room);
-            }
-
+            CheckStart(room);
             var entity = room.ToEntity();
             _roomRepository.Update(entity);
+        }
+
+        private void CheckStart(RoomModel room)
+        {
+            if (!room.CanStart()) return;
+            room.GameState = GameStateType.Running;
+            _mapService.CreateMap(room);
+
         }
     }
 }

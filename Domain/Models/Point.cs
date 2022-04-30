@@ -1,4 +1,7 @@
-﻿namespace Domain.Models
+﻿using System;
+using Domain.Enums;
+
+namespace Domain.Models
 {
     public class Point
     {
@@ -11,6 +14,28 @@
         {
             X = x;
             Y = y;
+        }
+
+        public Point Move(DirectionType direction)
+        {
+            var point = new Point(X, Y);
+            switch (direction)
+            {
+                case DirectionType.Left:
+                    point.X--;
+                    break;
+                case DirectionType.Top:
+                    point.Y--;
+                    break;
+                case DirectionType.Right:
+                    point.X++;
+                    break;
+                case DirectionType.Bottom:
+                    point.Y++;
+                    break;
+            }
+
+            return point;
         }
     }
 }

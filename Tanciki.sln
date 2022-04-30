@@ -7,9 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiService", "ApiService\Ap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{EDA5AA25-E6D3-40FC-8B77-DB19E8E2CB6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqliteDataLayer", "SqliteDataLayer\SqliteDataLayer.csproj", "{C39D1677-27CB-4C4B-BF9B-A930727EA248}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqliteDataLayer", "SqliteDataLayer\SqliteDataLayer.csproj", "{C39D1677-27CB-4C4B-BF9B-A930727EA248}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{4D97A2B7-7BBA-4582-B665-878AED87E73B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{4D97A2B7-7BBA-4582-B665-878AED87E73B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01F02190-FCD5-4AC8-BB6C-16F363AC7A60}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
